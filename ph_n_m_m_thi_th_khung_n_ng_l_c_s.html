@@ -1,0 +1,964 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Phần Mềm Thi Thử Trắc Nghiệm - Khung Năng Lực Số Lãnh Đạo</title>
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- FontAwesome Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- Google Font Inter -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        body { font-family: 'Inter', sans-serif; }
+    </style>
+</head>
+<body class="bg-slate-50 text-slate-800 min-h-screen flex flex-col justify-between">
+
+    <header class="bg-gradient-to-r from-blue-900 to-indigo-900 text-white shadow-lg sticky top-0 z-50">
+        <div class="max-w-7xl mx-auto px-4 py-4 flex flex-col sm:flex-row justify-between items-center">
+            <div class="flex items-center space-x-3 mb-2 sm:mb-0">
+                <div class="bg-blue-600 p-2.5 rounded-xl shadow-inner">
+                    <i class="fa-solid fa-graduation-cap text-2xl"></i>
+                </div>
+                <div>
+                    <h1 class="text-lg sm:text-xl font-bold tracking-tight">KỲ THI TRẮC NGHIỆM NĂNG LỰC SỐ</h1>
+                    <p class="text-xs text-blue-200">Chuyên đề 1: Sẵn sàng thay đổi và văn hóa số</p>
+                </div>
+            </div>
+            <div id="header-timer" class="hidden bg-blue-800/80 border border-blue-600/50 px-4 py-2 rounded-xl font-mono text-base flex items-center space-x-2 shadow-sm">
+                <i class="fa-regular fa-clock text-yellow-300"></i>
+                <span>Thời gian:</span>
+                <span id="time-display" class="font-bold text-yellow-300">00:00</span>
+            </div>
+        </div>
+    </header>
+
+    <main class="max-w-7xl mx-auto px-4 py-8 w-full flex-grow">
+        
+        <!-- Welcome Screen -->
+        <div id="screen-welcome" class="max-w-3xl mx-auto bg-white rounded-2xl shadow-xl border border-slate-100 overflow-hidden">
+            <div class="bg-blue-600 px-8 py-6 text-white text-center relative">
+                <h2 class="text-2xl sm:text-3xl font-bold mb-2">Hệ Thống Thi Thử Trắc Nghiệm</h2>
+                <p class="text-blue-100 text-sm">Dành cho Bí thư, Chủ tịch HĐND, UBND, MTTQ xã, phường</p>
+            </div>
+            <div class="p-8 space-y-6">
+                <div class="bg-slate-50 rounded-xl p-5 border border-slate-200 text-sm space-y-2 text-slate-700">
+                    <p class="font-semibold text-slate-900 flex items-center"><i class="fa-solid fa-circle-info text-blue-600 mr-2"></i> Thông tin bài thi:</p>
+                    <ul class="list-disc list-inside space-y-1 pl-1 text-slate-600">
+                        <li><strong>Ngân hàng câu hỏi:</strong> Chuyên đề 1 (Tổng 40 câu hỏi chuẩn hóa).</li>
+                        <li><strong>Thời gian làm bài:</strong> Tự động tính <strong>1 phút / 1 câu</strong>.</li>
+                        <li><strong>Tính năng:</strong> Có đồng hồ đếm ngược, đánh dấu câu hỏi cần xem lại, xem đáp án và giải thích chi tiết sau khi nộp bài.</li>
+                    </ul>
+                </div>
+
+                <div>
+                    <label class="block text-sm font-semibold text-slate-700 mb-3"><i class="fa-solid fa-layer-group text-blue-600 mr-2"></i> Chọn cấp độ thi hoặc làm bài tổng hợp:</label>
+                    <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                        <button onclick="selectLevel('level1')" class="p-4 rounded-xl border-2 border-slate-200 hover:border-blue-600 hover:bg-blue-50/50 transition text-left group">
+                            <div class="font-bold text-slate-900 group-hover:text-blue-600 flex items-center"><i class="fa-solid fa-seedling mr-2 text-emerald-500"></i> Mức 1 - Nhận Biết</div>
+                            <p class="text-xs text-slate-500 mt-1">10 câu hỏi • Thời gian: 10 phút</p>
+                        </button>
+                        <button onclick="selectLevel('level2')" class="p-4 rounded-xl border-2 border-slate-200 hover:border-blue-600 hover:bg-blue-50/50 transition text-left group">
+                            <div class="font-bold text-slate-900 group-hover:text-blue-600 flex items-center"><i class="fa-solid fa-person-chalkboard mr-2 text-blue-500"></i> Mức 2 - Sử Dụng</div>
+                            <p class="text-xs text-slate-500 mt-1">10 câu hỏi • Thời gian: 10 phút</p>
+                        </button>
+                        <button onclick="selectLevel('level3')" class="p-4 rounded-xl border-2 border-slate-200 hover:border-blue-600 hover:bg-blue-50/50 transition text-left group">
+                            <div class="font-bold text-slate-900 group-hover:text-blue-600 flex items-center"><i class="fa-solid fa-chess-board mr-2 text-indigo-500"></i> Mức 3 - Điều Hành</div>
+                            <p class="text-xs text-slate-500 mt-1">10 câu hỏi • Thời gian: 10 phút</p>
+                        </button>
+                        <button onclick="selectLevel('level4')" class="p-4 rounded-xl border-2 border-slate-200 hover:border-blue-600 hover:bg-blue-50/50 transition text-left group">
+                            <div class="font-bold text-slate-900 group-hover:text-blue-600 flex items-center"><i class="fa-solid fa-rocket mr-2 text-amber-500"></i> Mức 4 - Đổi Mới</div>
+                            <p class="text-xs text-slate-500 mt-1">10 câu hỏi • Thời gian: 10 phút</p>
+                        </button>
+                    </div>
+                </div>
+
+                <div class="pt-2">
+                    <button onclick="selectLevel('all')" class="w-full bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700 text-white font-bold py-3.5 px-6 rounded-xl shadow-lg transition duration-200 flex items-center justify-center space-x-2 text-base">
+                        <i class="fa-solid fa-bolt"></i>
+                        <span>Thi Tổng Hợp Toàn Bộ (40 Câu - 40 Phút)</span>
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Quiz Screen -->
+        <div id="screen-quiz" class="hidden grid grid-cols-1 lg:grid-cols-4 gap-6 items-start">
+            <!-- Main Question Area -->
+            <div class="lg:col-span-3 space-y-4">
+                <div class="bg-white rounded-2xl shadow-sm border border-slate-200 p-6 sm:p-8">
+                    <div class="flex justify-between items-center mb-6 pb-4 border-b border-slate-100">
+                        <div class="flex items-center space-x-3">
+                            <span id="q-badge-level" class="bg-blue-100 text-blue-800 text-xs font-semibold px-3 py-1 rounded-full">Mức độ</span>
+                            <span class="text-xs font-medium text-slate-500">Câu hỏi <span id="current-q-num" class="font-bold text-slate-800">1</span> / <span id="total-q-num">10</span></span>
+                        </div>
+                        <button onclick="toggleFlagCurrent()" id="btn-flag" class="text-xs font-medium px-3 py-1.5 rounded-lg border border-slate-300 hover:bg-slate-50 transition flex items-center space-x-1.5 text-slate-600">
+                            <i class="fa-regular fa-flag text-amber-500"></i>
+                            <span id="flag-text">Đánh dấu xem lại</span>
+                        </button>
+                    </div>
+
+                    <h3 id="q-title" class="text-lg sm:text-xl font-semibold text-slate-900 mb-6 leading-relaxed">Nội dung câu hỏi sẽ hiển thị ở đây?</h3>
+
+                    <div id="q-options" class="space-y-3">
+                        <!-- Options injected via JS -->
+                    </div>
+                </div>
+
+                <!-- Navigation Buttons -->
+                <div class="flex justify-between items-center bg-white rounded-2xl shadow-sm border border-slate-200 p-4">
+                    <button onclick="prevQuestion()" id="btn-prev" class="bg-slate-100 hover:bg-slate-200 text-slate-700 font-medium py-2 px-5 rounded-xl transition flex items-center space-x-2 text-sm disabled:opacity-50 disabled:cursor-not-allowed">
+                        <i class="fa-solid fa-arrow-left"></i>
+                        <span>Câu trước</span>
+                    </button>
+                    <button onclick="nextQuestion()" id="btn-next" class="bg-blue-600 hover:bg-blue-700 text-white font-medium py-2 px-6 rounded-xl transition flex items-center space-x-2 text-sm">
+                        <span>Câu tiếp theo</span>
+                        <i class="fa-solid fa-arrow-right"></i>
+                    </button>
+                </div>
+            </div>
+
+            <!-- Question Palette Sidebar -->
+            <div class="bg-white rounded-2xl shadow-sm border border-slate-200 p-6 sticky top-24 space-y-6">
+                <div>
+                    <h3 class="font-bold text-slate-900 text-sm mb-3 flex items-center"><i class="fa-solid fa-th-large text-blue-600 mr-2"></i> Danh sách câu hỏi</h3>
+                    <div id="palette-grid" class="grid grid-cols-5 gap-2 max-h-60 overflow-y-auto p-1">
+                        <!-- Palette items injected via JS -->
+                    </div>
+                </div>
+
+                <div class="space-y-2 text-xs text-slate-600 border-t border-slate-100 pt-4">
+                    <div class="flex items-center space-x-2"><span class="w-3 h-3 bg-emerald-500 rounded-sm"></span><span>Đã trả lời</span></div>
+                    <div class="flex items-center space-x-2"><span class="w-3 h-3 bg-amber-500 rounded-sm"></span><span>Đánh dấu xem lại</span></div>
+                    <div class="flex items-center space-x-2"><span class="w-3 h-3 bg-slate-200 rounded-sm"></span><span>Chưa trả lời</span></div>
+                </div>
+
+                <button onclick="confirmSubmit()" class="w-full bg-emerald-600 hover:bg-emerald-700 text-white font-bold py-3 px-4 rounded-xl shadow-md transition duration-200 text-sm flex items-center justify-center space-x-2">
+                    <i class="fa-solid fa-paper-plane"></i>
+                    <span>Nộp Bài Thi</span>
+                </button>
+            </div>
+        </div>
+
+        <!-- Result Screen -->
+        <div id="screen-result" class="hidden max-w-4xl mx-auto space-y-6">
+            <div class="bg-white rounded-2xl shadow-xl border border-slate-100 p-8 text-center space-y-6">
+                <div class="w-20 h-20 bg-emerald-100 text-emerald-600 rounded-full flex items-center justify-center mx-auto text-3xl shadow-inner">
+                    <i class="fa-solid fa-trophy"></i>
+                </div>
+                <div>
+                    <h2 class="text-3xl font-extrabold text-slate-900">Kết Quả Bài Thi Trắc Nghiệm</h2>
+                    <p class="text-slate-500 text-sm mt-1">Đã hoàn thành bài thi ngân hàng câu hỏi chuyên đề 1</p>
+                </div>
+
+                <div class="grid grid-cols-1 sm:grid-cols-3 gap-4 max-w-2xl mx-auto py-4 border-y border-slate-100">
+                    <div class="bg-slate-50 p-4 rounded-xl border border-slate-200">
+                        <p class="text-xs text-slate-500 font-medium">Số điểm đạt được</p>
+                        <p id="res-score" class="text-3xl font-black text-blue-600 mt-1">0/10</p>
+                    </div>
+                    <div class="bg-slate-50 p-4 rounded-xl border border-slate-200">
+                        <p class="text-xs text-slate-500 font-medium">Thời gian hoàn thành</p>
+                        <p id="res-time" class="text-3xl font-black text-slate-700 mt-1">00:00</p>
+                    </div>
+                    <div class="bg-slate-50 p-4 rounded-xl border border-slate-200">
+                        <p class="text-xs text-slate-500 font-medium">Đánh giá chung</p>
+                        <p id="res-grade" class="text-xl font-bold text-emerald-600 mt-1">-</p>
+                    </div>
+                </div>
+
+                <div class="flex flex-wrap justify-center gap-4 pt-2">
+                    <button onclick="restartQuiz()" class="bg-blue-600 hover:bg-blue-700 text-white font-semibold py-2.5 px-6 rounded-xl transition shadow-sm flex items-center space-x-2">
+                        <i class="fa-solid fa-rotate-right"></i>
+                        <span>Thi Lại (Chọn Mức Khác)</span>
+                    </button>
+                    <button onclick="toggleReviewDetail()" class="bg-slate-800 hover:bg-slate-900 text-white font-semibold py-2.5 px-6 rounded-xl transition shadow-sm flex items-center space-x-2">
+                        <i class="fa-solid fa-list-check"></i>
+                        <span id="btn-toggle-review-text">Xem Chi Tiết Đáp Án</span>
+                    </button>
+                </div>
+            </div>
+
+            <!-- Detailed Review Section -->
+            <div id="review-container" class="hidden space-y-4">
+                <h3 class="text-xl font-bold text-slate-900 px-2"><i class="fa-solid fa-book-open-reader text-blue-600 mr-2"></i> Chi Tiết Đáp Án & Giải Thích</h3>
+                <div id="review-list" class="space-y-4">
+                    <!-- Detailed cards injected via JS -->
+                </div>
+            </div>
+        </div>
+
+    </main>
+
+    <footer class="bg-white border-t border-slate-200 py-4 text-center text-xs text-slate-500 mt-8">
+        <p>Phần mềm Demo Thi Thử Trắc Nghiệm - Khung Năng Lực Số Lãnh Đạo Cấp Cơ Sở</p>
+    </footer>
+
+    <script>
+        // Toàn bộ 40 câu hỏi Chuyên đề 1 phân chia rõ 4 mức
+        const allQuestions = [
+            // MỨC 1 - NHẬN BIẾT (10 câu)
+            {
+                id: 1, level: "Mức 1 - Nhận biết", badgeClass: "bg-emerald-100 text-emerald-800",
+                question: "Vì sao chính quyền các xã, phường phải chuyển sang làm việc trên môi trường số?",
+                options: [
+                    "Vì cấp trên yêu cầu hoàn thành chỉ tiêu thi đua về chuyển đổi số hằng năm của đơn vị.",
+                    "Vì phần mềm mới có giá rẻ hơn và có thể thay thế được phần lớn công việc của cán bộ.",
+                    "Vì môi trường số giúp giảm số lượng cán bộ, công chức phải bố trí cho từng bộ phận.",
+                    "Vì kỳ vọng của người dân đã thay đổi – quen nhanh, minh bạch, ít đi lại nên chính quyền phải thích ứng."
+                ],
+                answer: 3
+            },
+            {
+                id: 2, level: "Mức 1 - Nhận biết", badgeClass: "bg-emerald-100 text-emerald-800",
+                question: "Trong bốn lợi ích của làm việc số, lợi ích nào quan trọng nhất với người lãnh đạo trong điều hành?",
+                options: [
+                    "Rõ trách nhiệm – mỗi bước công việc có người phụ trách và thời hạn, nên khi chậm biết chậm ở đâu.",
+                    "Giảm chi phí mua sắm thiết bị và văn phòng phẩm cho các bộ phận trong cơ quan.",
+                    "Tăng số lượng văn bản được soạn thảo và phát hành trong mỗi tháng của đơn vị.",
+                    "Giúp người lãnh đạo không phải tham dự các cuộc họp giao ban định kỳ hằng tuần."
+                ],
+                answer: 0
+            },
+            {
+                id: 3, level: "Mức 1 - Nhận biết", badgeClass: "bg-emerald-100 text-emerald-800",
+                question: "Theo bài học, người 'lãnh đạo số' cần điều gì?",
+                options: [
+                    "Phải biết lập trình và tự cấu hình phần mềm của các hệ thống.",
+                    "Phải trực tiếp thao tác mọi nghiệp vụ kỹ thuật thay cho cán bộ.",
+                    "Hiểu công nghệ, dữ liệu, quy trình, dashboard là công cụ hỗ trợ điều hành và ra quyết định.",
+                    "Chờ bộ phận kỹ thuật quyết định thay mình mọi vấn đề liên quan công nghệ."
+                ],
+                answer: 2
+            },
+            {
+                id: 4, level: "Mức 1 - Nhận biết", badgeClass: "bg-emerald-100 text-emerald-800",
+                question: "Đối với người đứng đầu, dashboard và các hệ thống số nên được hiểu là gì?",
+                options: [
+                    "Là sản phẩm chỉ dành riêng cho cán bộ kỹ thuật sử dụng.",
+                    "Là công cụ hỗ trợ điều hành và ra quyết định tốt hơn.",
+                    "Là báo cáo giấy được in ra định kỳ để lưu vào hồ sơ.",
+                    "Là yêu cầu hình thức để đối phó khi có đoàn kiểm tra."
+                ],
+                answer: 1
+            },
+            {
+                id: 5, level: "Mức 1 - Nhận biết", badgeClass: "bg-emerald-100 text-emerald-800",
+                question: "Mục đích chính khi chính quyền cơ sở thích ứng với môi trường số là gì?",
+                options: [
+                    "Phục vụ người dân tốt hơn, không tụt lại so với kỳ vọng của chính người dân mình phục vụ.",
+                    "Chạy theo phong trào chuyển đổi số để được ghi nhận thành tích.",
+                    "Giảm bớt việc tiếp công dân trực tiếp tại trụ sở cơ quan.",
+                    "Thay thế hoàn toàn vai trò của cán bộ bằng các hệ thống tự động."
+                ],
+                answer: 0
+            },
+            {
+                id: 6, level: "Mức 1 - Nhận biết", badgeClass: "bg-emerald-100 text-emerald-800",
+                question: "Làm việc trên môi trường số mang lại những lợi ích nào cho chính quyền cơ sở?",
+                options: [
+                    "Giảm được số lượng cán bộ, công chức phải bố trí cho mỗi bộ phận.",
+                    "Giảm chờ đợi, giảm giấy tờ, rõ trách nhiệm và phục vụ người dân tốt hơn.",
+                    "Giảm số cuộc họp phải tổ chức trong năm xuống mức thấp nhất.",
+                    "Giảm khối lượng văn bản mà cơ quan phải ban hành hằng tháng."
+                ],
+                answer: 1
+            },
+            {
+                id: 7, level: "Mức 1 - Nhận biết", badgeClass: "bg-emerald-100 text-emerald-800",
+                question: "“Kỳ vọng của người dân đã thay đổi” được hiểu cụ thể theo hướng nào?",
+                options: [
+                    "Người dân mong được miễn, giảm các khoản phí khi nộp hồ sơ.",
+                    "Người dân mong cơ quan mở cửa thêm giờ vào buổi tối và ngày nghỉ.",
+                    "Người dân đã quen với tốc độ nhanh, sự minh bạch và việc ít phải đi lại.",
+                    "Người dân mong được gặp trực tiếp lãnh đạo mỗi khi có việc cần giải quyết."
+                ],
+                answer: 2
+            },
+            {
+                id: 8, level: "Mức 1 - Nhận biết", badgeClass: "bg-emerald-100 text-emerald-800",
+                question: "Người 'lãnh đạo số' có bắt buộc phải trực tiếp thao tác kỹ thuật chuyên sâu không?",
+                options: [
+                    "Có – lãnh đạo phải thành thạo mọi thao tác kỹ thuật như cán bộ chuyên môn.",
+                    "Có – nếu không tự cấu hình được hệ thống thì không thể điều hành.",
+                    "Không – nhưng phải giao toàn quyền quyết định công nghệ cho bộ phận kỹ thuật.",
+                    "Không bắt buộc chuyên sâu – nhưng cần hiểu công nghệ, dữ liệu, quy trình và bảng điều hành để ra quyết định."
+                ],
+                answer: 3
+            },
+            {
+                id: 9, level: "Mức 1 - Nhận biết", badgeClass: "bg-emerald-100 text-emerald-800",
+                question: "Trong bốn lợi ích của làm việc số, lợi ích “phục vụ người dân tốt hơn” thể hiện cụ thể ở điều gì?",
+                options: [
+                    "Người dân được miễn toàn bộ các khoản phí, lệ phí khi nộp hồ sơ theo hình thức trực tuyến.",
+                    "Thông tin xử lý minh bạch, người dân tra cứu được hồ sơ của mình đang ở bước nào.",
+                    "Cơ quan bố trí thêm cán bộ tiếp dân tại trụ sở để rút ngắn thời gian chờ đợi của người dân.",
+                    "Người dân được ưu tiên gặp trực tiếp lãnh đạo mỗi khi hồ sơ có vướng mắc phát sinh."
+                ],
+                answer: 1
+            },
+            {
+                id: 10, level: "Mức 1 - Nhận biết", badgeClass: "bg-emerald-100 text-emerald-800",
+                question: "Đâu KHÔNG phải là mục đích của việc chuyển sang làm việc trên môi trường số?",
+                options: [
+                    "Giảm biên chế và cắt giảm nhân sự của cơ quan.",
+                    "Rút ngắn thời gian chờ đợi của người dân khi giải quyết công việc.",
+                    "Làm rõ trách nhiệm ở từng bước xử lý công việc.",
+                    "Giảm khối lượng giấy tờ phải in ấn và luân chuyển."
+                ],
+                answer: 0
+            },
+
+            // MỨC 2 - SỬ DỤNG (10 câu)
+            {
+                id: 11, level: "Mức 2 - Sử dụng", badgeClass: "bg-blue-100 text-blue-800",
+                question: "Trong một tuần làm việc, đâu là dấu hiệu rõ nhất cho thấy người đứng đầu đã gương mẫu ứng dụng công nghệ?",
+                options: [
+                    "Đã phê duyệt kinh phí mua thêm phần mềm cho cơ quan.",
+                    "Chủ trì họp không giấy tờ và trực tiếp xử lý, ký số văn bản điện tử.",
+                    "Đã ban hành kế hoạch nâng cao kỹ năng số cho toàn bộ cán bộ.",
+                    "Đã giao bộ phận chuyên môn thiết kế lại quy trình điện tử."
+                ],
+                answer: 1
+            },
+            {
+                id: 12, level: "Mức 2 - Sử dụng", badgeClass: "bg-blue-100 text-blue-800",
+                question: "Người đứng đầu nêu gương ứng dụng công nghệ trên công cụ nào gắn với vai trò của mình?",
+                options: [
+                    "Mọi chức danh đều nêu gương trên cùng một hệ thống duy nhất do Thành phố chỉ định chung.",
+                    "Bí thư Đảng ủy nêu gương trên iHanoi vì đây là kênh có nhiều người dân theo dõi nhất.",
+                    "Bí thư – văn bản Đảng; Chủ tịch HĐND – công cụ HĐND; Chủ tịch UBND – QLVB/HanoiWork/iHanoi; Chủ tịch MTTQ – hệ thống MTTQ.",
+                    "Người đứng đầu chỉ cần nêu gương khi làm việc trực tiếp, không cần thể hiện trên hệ thống."
+                ],
+                answer: 2
+            },
+            {
+                id: 13, level: "Mức 2 - Sử dụng", badgeClass: "bg-blue-100 text-blue-800",
+                question: "Trường hợp nào là 'nêu gương hình thức' cần tránh?",
+                options: [
+                    "In tài liệu ra để họp, ký tay rồi mới giao người khác số hóa.",
+                    "Gửi tài liệu trước qua hệ thống và ký số ngay tại cuộc họp.",
+                    "Tự tra cứu thông tin trên hệ thống thay vì yêu cầu in báo cáo.",
+                    "Xử lý văn bản điện tử đúng quy định ngay trên hệ thống."
+                ],
+                answer: 0
+            },
+            {
+                id: 14, level: "Mức 2 - Sử dụng", badgeClass: "bg-blue-100 text-blue-800",
+                question: "Vì sao nêu gương của người đứng đầu là điều kiện tiên quyết cho chuyển đổi số?",
+                options: [
+                    "Vì nêu gương giúp giảm chi phí mua phần mềm cho cơ quan.",
+                    "Vì cấp trên chấm điểm thi đua theo số lần lãnh đạo dùng máy tính.",
+                    "Vì nêu gương thay thế được việc đào tạo kỹ năng cho cán bộ.",
+                    "Vì nếu lãnh đạo còn in ký tay, còn nhờ thao tác thay thì khó yêu cầu cấp dưới thay đổi."
+                ],
+                answer: 3
+            },
+            {
+                id: 15, level: "Mức 2 - Sử dụng", badgeClass: "bg-blue-100 text-blue-800",
+                question: "Một Chủ tịch UBND phường muốn cơ quan chuyển sang xử lý công việc trên hệ thống. Bước khởi đầu phù hợp nhất là gì?",
+                options: [
+                    "Ban hành văn bản phê bình các bộ phận chưa dùng hệ thống.",
+                    "Tự mình nêu gương – chủ trì họp không giấy, ký số, xử lý văn bản điện tử trước.",
+                    "Chờ đến khi tất cả cán bộ thành thạo rồi lãnh đạo mới bắt đầu dùng.",
+                    "Giao toàn bộ việc dùng hệ thống cho bộ phận văn thư đảm nhiệm."
+                ],
+                answer: 1
+            },
+            {
+                id: 16, level: "Mức 2 - Sử dụng", badgeClass: "bg-blue-100 text-blue-800",
+                question: "Người đứng đầu cần trực tiếp thực hiện những việc nào?",
+                options: [
+                    "Xử lý văn bản điện tử, ký số đúng quy định, dự họp không giấy và tra cứu thông tin trên hệ thống.",
+                    "Cấu hình hệ thống, phân quyền tài khoản và quản trị người dùng cho toàn cơ quan.",
+                    "Xây dựng kế hoạch đào tạo kỹ năng số cho toàn thể cán bộ trong đơn vị.",
+                    "Thiết kế lại quy trình nội bộ và tự động hóa các khâu lặp lại của đơn vị."
+                ],
+                answer: 0
+            },
+            {
+                id: 17, level: "Mức 2 - Sử dụng", badgeClass: "bg-blue-100 text-blue-800",
+                question: "Việc lãnh đạo chủ trì giao ban không giấy, tài liệu gửi trước qua hệ thống, văn bản ký số đem lại tác dụng kép nào?",
+                options: [
+                    "Vừa tiết kiệm chi phí văn phòng phẩm, vừa tăng số văn bản ban hành.",
+                    "Vừa rút ngắn thời gian họp, vừa giảm số người phải dự họp.",
+                    "Vừa xử lý nhanh hơn, vừa đặt chuẩn mực cho cả cơ quan noi theo.",
+                    "Vừa giảm khối lượng công việc của lãnh đạo, vừa tăng việc cho cán bộ."
+                ],
+                answer: 2
+            },
+            {
+                id: 18, level: "Mức 2 - Sử dụng", badgeClass: "bg-blue-100 text-blue-800",
+                question: "Nếu lãnh đạo vẫn in văn bản ra ký tay rồi giao cán bộ số hóa lại, hệ quả đối với cả cơ quan là gì?",
+                options: [
+                    "Không ảnh hưởng gì, vì kết quả cuối cùng vẫn là văn bản điện tử.",
+                    "Chỉ làm tăng thêm một chút khối lượng công việc cho bộ phận văn thư.",
+                    "Giúp lưu được cả bản giấy lẫn bản điện tử nên an toàn hơn.",
+                    "Làm mất tính nêu gương – lãnh đạo còn làm vậy thì khó yêu cầu cấp dưới thay đổi."
+                ],
+                answer: 3
+            },
+            {
+                id: 19, level: "Mức 2 - Sử dụng", badgeClass: "bg-blue-100 text-blue-800",
+                question: "Hoạt động tự rà soát 'còn thao tác nào tôi vẫn nhờ người khác làm thay?' nhằm mục đích gì?",
+                options: [
+                    "Để lập danh sách công việc cần chuyển giao cho cấp phó phụ trách.",
+                    "Để nhận diện khoảng cách giữa yêu cầu nêu gương và thực tế thao tác của chính mình.",
+                    "Để đánh giá mức độ hoàn thành nhiệm vụ của thư ký và bộ phận giúp việc.",
+                    "Để làm căn cứ đề nghị bổ sung biên chế cho bộ phận chuyên môn."
+                ],
+                answer: 1
+            },
+            {
+                id: 20, level: "Mức 2 - Sử dụng", badgeClass: "bg-blue-100 text-blue-800",
+                question: "Yêu cầu 'gương mẫu ứng dụng công nghệ' khác với yêu cầu 'thao tác được trên hệ thống' ở điểm nào?",
+                options: [
+                    "Không khác nhau; cả hai chỉ phản ánh khả năng thao tác của cá nhân.",
+                    "Gương mẫu đòi hỏi kỹ thuật chuyên sâu hơn so với thao tác thông thường.",
+                    "Thao tác được chỉ cần chứng minh bằng chứng chỉ; gương mẫu chỉ cần thể hiện khi có kiểm tra.",
+                    "Thao tác được phản ánh năng lực cá nhân; gương mẫu là sử dụng đúng, nhất quán và công khai để tạo chuẩn mực."
+                ],
+                answer: 3
+            },
+
+            // MỨC 3 - ĐIỀU HÀNH (10 câu)
+            {
+                id: 21, level: "Mức 3 - Điều hành", badgeClass: "bg-indigo-100 text-indigo-800",
+                question: "Khi lãnh đạo bố trí thời gian học, phân công người kèm cặp và ghi nhận tiến bộ kỹ năng số của cán bộ, điều đó thể hiện vai trò gì?",
+                options: [
+                    "Vai trò phát triển con người – tạo điều kiện để cán bộ cấp dưới nâng cao kỹ năng số.",
+                    "Vai trò vận hành và quản lý rủi ro kỹ thuật của hệ thống công nghệ.",
+                    "Vai trò trực tiếp thao tác toàn bộ nghiệp vụ trên hệ thống thay cán bộ.",
+                    "Vai trò thiết kế lại toàn bộ quy trình điện tử của cơ quan."
+                ],
+                answer: 0
+            },
+            {
+                id: 22, level: "Mức 3 - Điều hành", badgeClass: "bg-indigo-100 text-indigo-800",
+                question: "Bốn đòn bẩy để lãnh đạo phát triển kỹ năng số cho đội ngũ gồm những gì?",
+                options: [
+                    "Mua sắm thiết bị, tuyển thêm nhân sự, thuê ngoài, khoán việc.",
+                    "Ban hành văn bản, kiểm tra đột xuất, xử phạt, báo cáo cấp trên.",
+                    "Tổ chức hội thi, phát tài liệu, treo khẩu hiệu, tổ chức sơ kết.",
+                    "Nêu gương, tạo điều kiện, ghi nhận, học trong công việc."
+                ],
+                answer: 3
+            },
+            {
+                id: 23, level: "Mức 3 - Điều hành", badgeClass: "bg-indigo-100 text-indigo-800",
+                question: "'Cán bộ hạt nhân số' trong đơn vị là ai?",
+                options: [
+                    "Cán bộ chuyên trách công nghệ thông tin do cấp trên cử xuống.",
+                    "Người thạo hơn một chút ở mỗi bộ phận, kèm cặp đồng nghiệp ngay trong công việc.",
+                    "Người lãnh đạo phụ trách toàn bộ hệ thống của cơ quan.",
+                    "Nhân viên được thuê ngoài để vận hành phần mềm cho đơn vị."
+                ],
+                answer: 1
+            },
+            {
+                id: 24, level: "Mức 3 - Điều hành", badgeClass: "bg-indigo-100 text-indigo-800",
+                question: "Một bộ phận có nhiều cán bộ chưa thành thạo xử lý hồ sơ trên hệ thống. Cách xử lý phù hợp của người lãnh đạo là gì?",
+                options: [
+                    "Phê bình công khai bộ phận tại cuộc họp, yêu cầu chấm dứt ngay và gắn kết quả vào thi đua.",
+                    "Tạm chấp nhận xử lý ngoài hệ thống, chờ cán bộ tự quen dần rồi mới yêu cầu chuyển đổi.",
+                    "Dùng bốn đòn bẩy: cử hạt nhân số kèm cặp, đặt mục tiêu, ghi nhận tiến bộ, lãnh đạo nêu gương.",
+                    "Đề nghị điều chuyển những người chưa thành thạo sang bộ phận khác và tuyển người mới."
+                ],
+                answer: 2
+            },
+            {
+                id: 25, level: "Mức 3 - Điều hành", badgeClass: "bg-indigo-100 text-indigo-800",
+                question: "Nguyên tắc 'không bỏ ai lại phía sau' khi phát triển kỹ năng số có nghĩa là gì?",
+                options: [
+                    "Hỗ trợ dựa trên nhu cầu, mức độ thành thạo; đặt mục tiêu theo nhóm; tránh gây áp lực cá nhân.",
+                    "Yêu cầu tất cả cán bộ đạt cùng một trình độ kỹ năng số trong cùng một thời điểm.",
+                    "Chỉ tập trung bồi dưỡng cho những cán bộ vốn đã thạo công nghệ để có kết quả nhanh.",
+                    "Loại khỏi vị trí những cán bộ chậm thích nghi với hệ thống mới của cơ quan."
+                ],
+                answer: 0
+            },
+            {
+                id: 26, level: "Mức 3 - Điều hành", badgeClass: "bg-indigo-100 text-indigo-800",
+                question: "Một lãnh đạo cho rằng: 'Tôi đã cho triển khai hệ thống mới, tức là đã tạo điều kiện nâng cao kỹ năng số.' Nhận định này thế nào?",
+                options: [
+                    "Chưa đúng – tạo điều kiện là phát triển con người: bố trí thời gian, phân công kèm cặp, ghi nhận tiến bộ.",
+                    "Đúng – có hệ thống mới thì cán bộ sẽ tự học được cách sử dụng trong quá trình làm việc hằng ngày.",
+                    "Đúng – triển khai hệ thống là điều kiện cần và đủ để nâng cao kỹ năng số cho đội ngũ.",
+                    "Chưa đúng vì đơn vị phải mua thêm phần mềm đào tạo chuyên dụng thì mới đủ điều kiện."
+                ],
+                answer: 0
+            },
+            {
+                id: 27, level: "Mức 3 - Điều hành", badgeClass: "bg-indigo-100 text-indigo-800",
+                question: "Đòn bẩy 'tạo điều kiện' bao gồm những việc cụ thể nào?",
+                options: [
+                    "Cấp thêm thiết bị và tăng băng thông đường truyền cho từng bộ phận trong cơ quan.",
+                    "Giao chỉ tiêu số giờ học bắt buộc và tổ chức kiểm tra định kỳ hằng tháng.",
+                    "Bố trí thời gian học; phân công người kèm cặp; cho phép thử nghiệm an toàn trên dữ liệu giả lập.",
+                    "Ký hợp đồng với đơn vị đào tạo bên ngoài để tổ chức các lớp tập trung cho cán bộ."
+                ],
+                answer: 2
+            },
+            {
+                id: 28, level: "Mức 3 - Điều hành", badgeClass: "bg-indigo-100 text-indigo-800",
+                question: "Khi cán bộ học kỹ năng liên quan đến hệ thống nghiệp vụ thật, cách tổ chức nào an toàn?",
+                options: [
+                    "Cho phép thao tác tự do để cán bộ nhanh quen việc.",
+                    "Trên hệ thống thật, chỉ xử lý công việc thực tế bằng tài khoản phù hợp; thử nghiệm thực hiện với dữ liệu giả lập.",
+                    "Tạm dừng hệ thống trong thời gian thực hành để tránh ảnh hưởng.",
+                    "Dùng chung một tài khoản của lãnh đạo để cán bộ thực hành cho tiện."
+                ],
+                answer: 1
+            },
+            {
+                id: 29, level: "Mức 3 - Điều hành", badgeClass: "bg-indigo-100 text-indigo-800",
+                question: "Kết quả đánh giá năng lực số của cán bộ được sử dụng như thế nào trong công tác cán bộ?",
+                options: [
+                    "Là căn cứ chính thức để xếp loại và bổ nhiệm, thay cho các tiêu chuẩn hiện hành.",
+                    "Là căn cứ duy nhất để xét thi đua, khen thưởng hằng năm của đơn vị và cá nhân.",
+                    "Không được sử dụng trong bất kỳ hoạt động nào liên quan đến công tác cán bộ.",
+                    "Là căn cứ tham khảo, không thay thế tiêu chuẩn, điều kiện và quy trình theo quy định của cấp có thẩm quyền."
+                ],
+                answer: 3
+            },
+            {
+                id: 30, level: "Mức 3 - Điều hành", badgeClass: "bg-indigo-100 text-indigo-800",
+                question: "Một 'kế hoạch nâng cao kỹ năng số' của đơn vị cần có tối thiểu những thành phần nào?",
+                options: [
+                    "Kinh phí, đơn vị đào tạo, địa điểm tổ chức và số buổi học dự kiến trong năm.",
+                    "Danh sách phần mềm cần trang bị và cấu hình máy tính tối thiểu cho từng cán bộ.",
+                    "Số lượng chứng chỉ tin học mà mỗi cán bộ phải đạt được trong năm công tác.",
+                    "Đối tượng, kỹ năng cần nâng, người kèm, hoạt động, thời hạn, minh chứng trên hệ thống và chỉ số tiến bộ."
+                ],
+                answer: 3
+            },
+
+            // MỨC 4 - ĐỔI MỚI (10 câu)
+            {
+                id: 31, level: "Mức 4 - Đổi mới", badgeClass: "bg-amber-100 text-amber-800",
+                question: "'Văn hóa số' của một cơ quan được hiểu đúng là gì?",
+                options: [
+                    "Mua thêm nhiều phần mềm và trang bị thiết bị hiện đại cho các bộ phận trong cơ quan.",
+                    "Giao cho một vài cán bộ tích cực phụ trách toàn bộ việc ứng dụng công nghệ của đơn vị.",
+                    "Thay đổi phương thức vận hành và thói quen tập thể để việc làm số trở thành mặc định của cả cơ quan.",
+                    "Tổ chức phong trào thi đua ứng dụng công nghệ theo từng đợt trong năm của cơ quan."
+                ],
+                answer: 2
+            },
+            {
+                id: 32, level: "Mức 4 - Đổi mới", badgeClass: "bg-amber-100 text-amber-800",
+                question: "Dấu hiệu cho thấy một cơ quan đã có 'văn hóa số' thực chất là gì?",
+                options: [
+                    "Cơ quan sở hữu nhiều hệ thống thông tin và dashboard hiện đại phục vụ điều hành.",
+                    "Khi vài cán bộ giỏi số chuyển đi nơi khác, cơ quan vẫn vận hành số bình thường vì đã thành nếp chung.",
+                    "Lãnh đạo thường xuyên nhắc nhở cán bộ sử dụng hệ thống trong các cuộc họp giao ban.",
+                    "Cơ quan báo cáo đầy đủ số liệu về chuyển đổi số theo yêu cầu của cấp có thẩm quyền."
+                ],
+                answer: 1
+            },
+            {
+                id: 33, level: "Mức 4 - Đổi mới", badgeClass: "bg-amber-100 text-amber-800",
+                question: "Theo khung tự đánh giá tham khảo, bộ minh chứng Mức 4 về văn hóa số gồm những thành phần nào?",
+                options: [
+                    "Số lượng phần mềm đã triển khai, kinh phí đầu tư và số máy tính được trang bị.",
+                    "Bằng khen, giấy chứng nhận và kết quả xếp hạng thi đua về chuyển đổi số.",
+                    "Bài phát biểu cam kết của lãnh đạo và khẩu hiệu tuyên truyền được treo tại trụ sở.",
+                    "Hành vi lãnh đạo; hành vi đội ngũ; thể chế hóa; dữ liệu/chỉ số; tính bền vững; ranh giới sử dụng."
+                ],
+                answer: 3
+            },
+            {
+                id: 34, level: "Mức 4 - Đổi mới", badgeClass: "bg-amber-100 text-amber-800",
+                question: "Khi bắt đầu xây dựng văn hóa số cho cơ quan, việc phải làm trước tiên là gì?",
+                options: [
+                    "Chẩn đoán hiện trạng của cơ quan.",
+                    "Thể chế hóa ngay bằng quy chế nội bộ để mọi người buộc phải thực hiện từ đầu.",
+                    "Chọn sẵn một vài thói quen số rồi đo lường xem bộ phận nào thực hiện tốt nhất.",
+                    "Đo lường kết quả hiện có rồi mới xem xét có cần cam kết của lãnh đạo hay không."
+                ],
+                answer: 0
+            },
+            {
+                id: 35, level: "Mức 4 - Đổi mới", badgeClass: "bg-amber-100 text-amber-800",
+                question: "Vì sao bước 'thể chế hóa' lại quan trọng trong xây dựng văn hóa số?",
+                options: [
+                    "Vì thể chế hóa giúp cơ quan có căn cứ để mua được nhiều phần mềm hơn trong năm.",
+                    "Vì thể chế hóa thay thế được việc lãnh đạo phải trực tiếp nêu gương trong công việc.",
+                    "Vì thiếu thể chế hóa và đo lường, chuyển đổi số dễ dừng ở phong trào, không thành nếp bền vững.",
+                    "Vì thể chế hóa giúp giảm số lượng cán bộ phải tham gia đào tạo lại về kỹ năng số."
+                ],
+                answer: 2
+            },
+            {
+                id: 36, level: "Mức 4 - Đổi mới", badgeClass: "bg-amber-100 text-amber-800",
+                question: "Trụ cột 'An toàn và trách nhiệm' của văn hóa số gắn với nguyên tắc nào?",
+                options: [
+                    "Công cụ số chỉ hỗ trợ; con người là bên chịu trách nhiệm về kết quả.",
+                    "Mọi rủi ro an toàn thông tin đều do bộ phận kỹ thuật chịu trách nhiệm.",
+                    "Hạn chế tối đa việc sử dụng công cụ số để tránh rủi ro phát sinh.",
+                    "Chỉ người đứng đầu mới được quyền truy cập các hệ thống quan trọng."
+                ],
+                answer: 0
+            },
+            {
+                id: 37, level: "Mức 4 - Đổi mới", badgeClass: "bg-amber-100 text-amber-800",
+                question: "Theo khung tự đánh giá tham khảo của bài học, bộ minh chứng văn hóa số Mức 4 được sử dụng với tính chất nào?",
+                options: [
+                    "Là tiêu chuẩn chính thức để xếp loại, đánh giá cán bộ hằng năm của đơn vị.",
+                    "Phục vụ học tập, tự đánh giá – không phải tiêu chuẩn xếp loại cán bộ.",
+                    "Là điều kiện bắt buộc để đơn vị được công nhận hoàn thành chuyển đổi số.",
+                    "Chỉ dùng để báo cáo thành tích với cấp trên khi có đoàn kiểm tra đến làm việc."
+                ],
+                answer: 1
+            },
+            {
+                id: 38, level: "Mức 4 - Đổi mới", badgeClass: "bg-amber-100 text-amber-800",
+                question: "Có thể đo mức độ hình thành văn hóa số bằng những chỉ số nào?",
+                options: [
+                    "Số phần mềm đã mua, số máy tính đã trang bị và tốc độ đường truyền internet.",
+                    "Số lớp tập huấn đã tổ chức trong năm và số lượt cán bộ đã tham dự.",
+                    "Tỷ lệ văn bản xử lý trên hệ thống; tỷ lệ họp không giấy; tỷ lệ nhiệm vụ cập nhật đúng hạn; tỷ lệ hài lòng của người dân.",
+                    "Số bài viết tuyên truyền về chuyển đổi số đã đăng trên cổng thông tin."
+                ],
+                answer: 2
+            },
+            {
+                id: 39, level: "Mức 4 - Đổi mới", badgeClass: "bg-amber-100 text-amber-800",
+                question: "Khi muốn nêu tinh thần 'ưu tiên xem xét khả năng ứng dụng AI', cần gắn với Khung kiến trúc số Thành phố và quy định nào?",
+                options: [
+                    "Gắn với chỉ tiêu thi đua của đơn vị và cam kết của người đứng đầu là đủ.",
+                    "Gắn với hợp đồng mua sắm công cụ AI đã được cấp có thẩm quyền phê duyệt kinh phí.",
+                    "Bảo đảm ứng dụng AI có kiểm soát, xác định trách nhiệm và biện pháp quản lý rủi ro theo quy định của Thành phố.",
+                    "Gắn với số lượng cán bộ đã được cấp tài khoản sử dụng công cụ AI trong đơn vị."
+                ],
+                answer: 2
+            },
+            {
+                id: 40, level: "Mức 4 - Đổi mới", badgeClass: "bg-amber-100 text-amber-800",
+                question: "Kế hoạch của xã Cổ Đô triển khai Kế hoạch số 38/KH-UBND được nêu như một ví dụ thể chế hóa thói quen số. Cần hiểu ví dụ đó như thế nào?",
+                options: [
+                    "Là căn cứ chung của Thành phố mà mọi xã, phường phải áp dụng.",
+                    "Là quy định bắt buộc đối với các đơn vị có điều kiện tương tự.",
+                    "Là mẫu văn bản đã được thẩm định để các đơn vị sao chép áp dụng.",
+                    "Là căn cứ tham khảo tại một địa phương – không phải căn cứ chung của Thành phố."
+                ],
+                answer: 3
+            }
+        ];
+
+        let currentQuestions = [];
+        let currentIndex = 0;
+        let userAnswers = {}; 
+        let flaggedQuestions = new Set(); 
+        let timerInterval = null;
+        let timeLeft = 0; 
+
+        // Chọn cấp độ thi
+        function selectLevel(type) {
+            if (type === 'level1') {
+                currentQuestions = allQuestions.slice(0, 10);
+            } else if (type === 'level2') {
+                currentQuestions = allQuestions.slice(10, 20);
+            } else if (type === 'level3') {
+                currentQuestions = allQuestions.slice(20, 30);
+            } else if (type === 'level4') {
+                currentQuestions = allQuestions.slice(30, 40);
+            } else {
+                currentQuestions = [...allQuestions];
+            }
+
+            currentIndex = 0;
+            userAnswers = {};
+            flaggedQuestions.clear();
+            
+            // Thời gian: 1 phút / câu
+            timeLeft = currentQuestions.length * 60;
+
+            // Chuyển màn hình
+            document.getElementById('screen-welcome').classList.add('hidden');
+            document.getElementById('screen-result').classList.add('hidden');
+            document.getElementById('screen-quiz').classList.remove('hidden');
+            document.getElementById('header-timer').classList.remove('hidden');
+
+            document.getElementById('total-q-num').textContent = currentQuestions.length;
+
+            renderQuestion();
+            renderPalette();
+            startTimer();
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+        }
+
+        // Bắt đầu đồng hồ đếm ngược
+        function startTimer() {
+            if (timerInterval) clearInterval(timerInterval);
+            updateTimerDisplay();
+
+            timerInterval = setInterval(() => {
+                timeLeft--;
+                updateTimerDisplay();
+
+                if (timeLeft <= 0) {
+                    clearInterval(timerInterval);
+                    submitQuiz();
+                }
+            }, 1000);
+        }
+
+        function updateTimerDisplay() {
+            const minutes = Math.floor(timeLeft / 60);
+            const seconds = timeLeft % 60;
+            document.getElementById('time-display').textContent = 
+                String(minutes).padStart(2, '0') + ":" + String(seconds).padStart(2, '0');
+        }
+
+        // Hiển thị câu hỏi hiện tại
+        function renderQuestion() {
+            const q = currentQuestions[currentIndex];
+            document.getElementById('current-q-num').textContent = currentIndex + 1;
+            
+            const badge = document.getElementById('q-badge-level');
+            badge.textContent = q.level;
+            badge.className = `text-xs font-semibold px-3 py-1 rounded-full ${q.badgeClass}`;
+
+            document.getElementById('q-title').textContent = q.question;
+
+            const optionsContainer = document.getElementById('q-options');
+            let html = '';
+
+            q.options.forEach((opt, optIdx) => {
+                const isSelected = userAnswers[currentIndex] === optIdx;
+                const borderClass = isSelected ? 'border-blue-600 bg-blue-50/60 ring-1 ring-blue-600' : 'border-slate-200 hover:bg-slate-50';
+
+                html += `
+                    <label class="flex items-start p-4 rounded-xl border ${borderClass} cursor-pointer transition option-label">
+                        <input type="radio" name="current_option" value="${optIdx}" ${isSelected ? 'checked' : ''} onchange="selectOption(${optIdx})" class="mt-1 h-4 w-4 text-blue-600 border-slate-300 focus:ring-blue-500">
+                        <span class="ml-3.5 text-sm sm:text-base text-slate-700 leading-snug">${opt}</span>
+                    </label>
+                `;
+            });
+
+            optionsContainer.innerHTML = html;
+
+            // Cập nhật nút Flag
+            const btnFlag = document.getElementById('btn-flag');
+            const flagText = document.getElementById('flag-text');
+            if (flaggedQuestions.has(currentIndex)) {
+                btnFlag.className = "text-xs font-medium px-3 py-1.5 rounded-lg border border-amber-400 bg-amber-50 transition flex items-center space-x-1.5 text-amber-700";
+                flagText.textContent = "Đã đánh dấu";
+                btnFlag.querySelector('i').className = "fa-solid fa-flag text-amber-500";
+            } else {
+                btnFlag.className = "text-xs font-medium px-3 py-1.5 rounded-lg border border-slate-300 hover:bg-slate-50 transition flex items-center space-x-1.5 text-slate-600";
+                flagText.textContent = "Đánh dấu xem lại";
+                btnFlag.querySelector('i').className = "fa-regular fa-flag text-amber-500";
+            }
+
+            // Nút Prev/Next
+            document.getElementById('btn-prev').disabled = currentIndex === 0;
+            const btnNext = document.getElementById('btn-next');
+            if (currentIndex === currentQuestions.length - 1) {
+                btnNext.innerHTML = `<span>Hoàn thành</span> <i class="fa-solid fa-check"></i>`;
+                btnNext.className = "bg-emerald-600 hover:bg-emerald-700 text-white font-medium py-2 px-6 rounded-xl transition flex items-center space-x-2 text-sm";
+            } else {
+                btnNext.innerHTML = `<span>Câu tiếp theo</span> <i class="fa-solid fa-arrow-right"></i>`;
+                btnNext.className = "bg-blue-600 hover:bg-blue-700 text-white font-medium py-2 px-6 rounded-xl transition flex items-center space-x-2 text-sm";
+            }
+
+            renderPalette();
+        }
+
+        // Chọn đáp án
+        function selectOption(optIdx) {
+            userAnswers[currentIndex] = optIdx;
+            renderPalette();
+            renderQuestion(); 
+        }
+
+        // Chuyển câu trước/sau
+        function prevQuestion() {
+            if (currentIndex > 0) {
+                currentIndex--;
+                renderQuestion();
+            }
+        }
+
+        function nextQuestion() {
+            if (currentIndex < currentQuestions.length - 1) {
+                currentIndex++;
+                renderQuestion();
+            } else {
+                confirmSubmit();
+            }
+        }
+
+        // Chuyển đến câu cụ thể qua Palette
+        function goToQuestion(index) {
+            currentIndex = index;
+            renderQuestion();
+        }
+
+        // Đánh dấu xem lại
+        function toggleFlagCurrent() {
+            if (flaggedQuestions.has(currentIndex)) {
+                flaggedQuestions.delete(currentIndex);
+            } else {
+                flaggedQuestions.add(currentIndex);
+            }
+            renderQuestion();
+        }
+
+        // Cập nhật danh sách palette câu hỏi bên sidebar
+        function renderPalette() {
+            const grid = document.getElementById('palette-grid');
+            let html = '';
+
+            currentQuestions.forEach((_, idx) => {
+                let bgClass = "bg-slate-100 text-slate-700 border-slate-200 hover:bg-slate-200";
+                if (userAnswers[idx] !== undefined) {
+                    bgClass = "bg-emerald-500 text-white border-emerald-600";
+                }
+                if (flaggedQuestions.has(idx)) {
+                    bgClass = "bg-amber-500 text-white border-amber-600";
+                }
+                if (currentIndex === idx) {
+                    bgClass += " ring-2 ring-offset-2 ring-blue-600 font-bold";
+                }
+
+                html += `
+                    <button onclick="goToQuestion(${idx})" class="w-10 h-10 rounded-xl border text-xs font-semibold flex items-center justify-center transition ${bgClass}">
+                        ${idx + 1}
+                    </button>
+                `;
+            });
+
+            grid.innerHTML = html;
+        }
+
+        // Xác nhận nộp bài
+        function confirmSubmit() {
+            const unanswered = currentQuestions.length - Object.keys(userAnswers).length;
+            let msg = "Bạn có chắc chắn muốn nộp bài thi?";
+            if (unanswered > 0) {
+                msg = `Bạn còn ${unanswered} câu chưa trả lời. Bạn vẫn muốn nộp bài chứ?`;
+            }
+
+            // Thay thế alert/confirm truyền thống bằng logic mượt mà hoặc hộp thoại tự nhiên
+            if (window.confirm(msg)) {
+                submitQuiz();
+            }
+        }
+
+        // Nộp bài & Hiển thị kết quả
+        function submitQuiz() {
+            if (timerInterval) clearInterval(timerInterval);
+
+            let score = 0;
+            currentQuestions.forEach((q, idx) => {
+                if (userAnswers[idx] === q.answer) {
+                    score++;
+                }
+            });
+
+            const totalTimeSpent = (currentQuestions.length * 60) - timeLeft;
+            const minutesSpent = Math.floor(totalTimeSpent / 60);
+            const secondsSpent = totalTimeSpent % 60;
+            const timeStr = `${minutesSpent} phút ${secondsSpent} giây`;
+
+            document.getElementById('screen-quiz').classList.add('hidden');
+            document.getElementById('header-timer').classList.add('hidden');
+            document.getElementById('screen-result').classList.remove('hidden');
+
+            document.getElementById('res-score').textContent = `${score}/${currentQuestions.length}`;
+            document.getElementById('res-time').textContent = timeStr;
+
+            let grade = "Cần cố gắng thêm";
+            const percent = (score / currentQuestions.length) * 100;
+            if (percent >= 90) grade = "Xuất sắc 🌟";
+            else if (percent >= 75) grade = "Giỏi 👏";
+            else if (percent >= 60) grade = "Đạt 👍";
+
+            document.getElementById('res-grade').textContent = grade;
+
+            renderReviewDetails();
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+        }
+
+        // Render chi tiết đáp án & giải thích sau khi nộp
+        function renderReviewDetails() {
+            const listContainer = document.getElementById('review-list');
+            let html = '';
+
+            currentQuestions.forEach((q, idx) => {
+                const userChoice = userAnswers[idx];
+                const isCorrect = userChoice === q.answer;
+                const statusBadge = isCorrect 
+                    ? `<span class="bg-emerald-100 text-emerald-800 text-xs font-semibold px-2.5 py-1 rounded-md"><i class="fa-solid fa-check mr-1"></i> Đúng</span>`
+                    : `<span class="bg-rose-100 text-rose-800 text-xs font-semibold px-2.5 py-1 rounded-md"><i class="fa-solid fa-xmark mr-1"></i> Sai / Chưa trả lời</span>`;
+
+                html += `
+                    <div class="bg-white rounded-2xl shadow-sm border ${isCorrect ? 'border-emerald-200' : 'border-rose-200'} p-6 space-y-4">
+                        <div class="flex justify-between items-center">
+                            <span class="font-bold text-slate-800 text-sm">Câu ${idx + 1} (${q.level})</span>
+                            ${statusBadge}
+                        </div>
+                        <h4 class="text-base font-semibold text-slate-900">${q.question}</h4>
+                        <div class="space-y-2 text-sm">
+                `;
+
+                q.options.forEach((opt, optIdx) => {
+                    let optStyle = "border-slate-200 bg-white text-slate-700";
+                    let iconHtml = "";
+
+                    if (optIdx === q.answer) {
+                        optStyle = "border-emerald-500 bg-emerald-50/70 text-emerald-900 font-medium";
+                        iconHtml = `<i class="fa-solid fa-circle-check text-emerald-600 ml-auto"></i>`;
+                    } else if (optIdx === userChoice && !isCorrect) {
+                        optStyle = "border-rose-300 bg-rose-50/70 text-rose-900";
+                        iconHtml = `<i class="fa-solid fa-circle-xmark text-rose-600 ml-auto"></i>`;
+                    }
+
+                    html += `
+                        <div class="flex items-center p-3 rounded-xl border ${optStyle}">
+                            <span>${opt}</span>
+                            ${iconHtml}
+                        </div>
+                    `;
+                });
+
+                html += `</div>
+                    <div class="bg-slate-50 rounded-xl p-3 text-xs text-slate-600 border border-slate-200 flex items-start space-x-2">
+                        <i class="fa-solid fa-lightbulb text-amber-500 mt-0.5 text-sm"></i>
+                        <div><strong>Đáp án chuẩn:</strong> Phương án ${String.fromCharCode(65 + q.answer)}. (Nội dung đúng đã được tô màu xanh lá).</div>
+                    </div>
+                </div>`;
+            });
+
+            listContainer.innerHTML = html;
+        }
+
+        // Bật/tắt xem danh sách chi tiết review
+        function toggleReviewDetail() {
+            const container = document.getElementById('review-container');
+            const btnText = document.getElementById('btn-toggle-review-text');
+            if (container.classList.contains('hidden')) {
+                container.classList.remove('hidden');
+                btnText.textContent = "Ẩn Chi Tiết Đáp Án";
+                container.scrollIntoView({ behavior: 'smooth' });
+            } else {
+                container.classList.add('hidden');
+                btnText.textContent = "Xem Chi Tiết Đáp Án";
+            }
+        }
+
+        // Thi lại từ đầu
+        function restartQuiz() {
+            if (timerInterval) clearInterval(timerInterval);
+            document.getElementById('screen-result').classList.add('hidden');
+            document.getElementById('review-container').classList.add('hidden');
+            document.getElementById('screen-welcome').classList.remove('hidden');
+            document.getElementById('header-timer').classList.add('hidden');
+            window.scrollTo({ top: 0, behavior: 'smooth'});
+        }
+    </script>
+</body>
+</html>
